@@ -2,6 +2,7 @@
 #include "ui_qtserver.h"
 
 #define BUFFER_SIZE 1024
+#define PORT 6666
 
 QtServer::QtServer(QWidget *parent)
     : QMainWindow(parent)
@@ -16,7 +17,7 @@ QtServer::QtServer(QWidget *parent)
 void QtServer::clicked_button_open() {
     tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newUser()));
-    if (!tcpServer->listen(QHostAddress::LocalHost, 6666) && server_status == 0) {
+    if (!tcpServer->listen(QHostAddress::LocalHost, PORT) && server_status == 0) {
         qDebug() << QObject::tr("Unable to start the server: %1.").arg(tcpServer->errorString());
 
     }
