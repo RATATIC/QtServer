@@ -1,23 +1,25 @@
-#pragma once
+#ifndef QTSERVER_H
+#define QTSERVER_H
 
-#include <QtWidgets/QMainWindow>
+#include <QMainWindow>
 #include <QtNetwork>
-#include "ui_Qtsever.h"
 
-class Qtsever : public QMainWindow
+QT_BEGIN_NAMESPACE
+namespace Ui { class QtServer; }
+QT_END_NAMESPACE
+
+class QtServer : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Qtsever(QWidget *parent = nullptr);
-    ~Qtsever();
+    QtServer(QWidget *parent = nullptr);
+    ~QtServer();
 
-private:
-    Ui::QtseverClass ui;
 private slots:
     void clicked_button_open();
     void clicked_button_close();
-    void newuser();
+    void newUser();
     void readFile();
     void readFileInfo();
 
@@ -29,4 +31,8 @@ private:
     qint64 fileSize;
     qint64 recivedFileSize;
     QTcpSocket* soc;
+
+private:
+    Ui::QtServer *ui;
 };
+#endif // QTSERVER_H

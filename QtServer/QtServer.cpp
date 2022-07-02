@@ -1,21 +1,24 @@
-#include "Qtsever.h"
+#include "QtServer.h"
+#include "ui_qtserver.h"
 
 #define BUFFER_SIZE 1024
 
-Qtsever::Qtsever(QWidget *parent)
+QtServer::QtServer(QWidget *parent)
     : QMainWindow(parent)
+    , ui(new Ui::QtServer)
 {
-    ui.setupUi(this);
-    connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(clicked_button_open()));
-    connect(ui.pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_button_close()));
+    ui->setupUi(this);
+
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clicked_button_open()));
+    connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(clicked_button_close()));
 }
 
-void Qtsever::clicked_button_open() {
+void QtServer::clicked_button_open() {
     tcpServer = new QTcpServer(this);
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newuser()));
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newUser()));
     if (!tcpServer->listen(QHostAddress::LocalHost, 6666) && server_status == 0) {
         qDebug() << QObject::tr("Unable to start the server: %1.").arg(tcpServer->errorString());
-        
+
     }
     else {
         server_status = 1;
@@ -24,7 +27,7 @@ void Qtsever::clicked_button_open() {
     }
 }
 
-void Qtsever::clicked_button_close() {
+void QtServer::clicked_button_close() {
     if (server_status == 1) {
 
         foreach(int i, SClients.keys()) {
@@ -41,10 +44,10 @@ void Qtsever::clicked_button_close() {
     }
 }
 
-void Qtsever::newuser() {
+void QtServer::newUser() {
 
     qDebug() << "start one";
-    
+
     if (server_status == 1) {
         qDebug() << "New connection";
         QTcpSocket* clientSocket = tcpServer->nextPendingConnection();
@@ -55,7 +58,7 @@ void Qtsever::newuser() {
     }
 }
 
-void Qtsever::readFileInfo() {
+void QtServer::readFileInfo() {
     soc = (QTcpSocket*)sender();
     int idusersocs = soc->socketDescriptor();
 
@@ -65,7 +68,7 @@ void Qtsever::readFileInfo() {
 
     in >> fileSize;
     in >> filename;
-    
+
     qDebug() << fileSize << filename;
 
     file = new QFile(filename);
@@ -75,7 +78,7 @@ void Qtsever::readFileInfo() {
         connect(SClients[idusersocs], SIGNAL(readyRead()), this, SLOT(readFile()));
     }
 }
-void Qtsever::readFile() {
+void QtServer::readFile() {
     QDataStream in(soc);
     char buffer[BUFFER_SIZE];
     while (!in.atEnd()) {
@@ -96,6 +99,8 @@ void Qtsever::readFile() {
     }
 }
 
-Qtsever::~Qtsever() {
-    server_status = 0;
+QtServer::~QtServer()
+{
+    delete ui;
 }
+
