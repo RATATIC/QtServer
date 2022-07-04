@@ -40,6 +40,9 @@ void QtServer::clicked_button_close() {
         }
 
         tcpServer->close();
+        delete tcpServer;
+        tcpServer = NULL;
+
         qDebug() << "Server stopped";
         server_status = 0;
     }
@@ -79,6 +82,7 @@ void QtServer::readFileInfo() {
         connect(SClients[idusersocs], SIGNAL(readyRead()), this, SLOT(readFile()));
     }
 }
+
 void QtServer::readFile() {
     QDataStream in(soc);
     char buffer[BUFFER_SIZE];
@@ -90,6 +94,7 @@ void QtServer::readFile() {
 
     if (recivedFileSize == fileSize) {
         file->close();
+        delete file;
         file = NULL;
 
         int idusersocs = soc->socketDescriptor();
